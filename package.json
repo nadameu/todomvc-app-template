@@ -1,7 +1,17 @@
 {
   "private": true,
+  "scripts": {
+    "start": "parcel index.html",
+    "type-check": "tsc"
+  },
   "dependencies": {
+    "lit-html": "^1.1.2",
+    "redux": "^4.0.4",
     "todomvc-app-css": "^2.0.0",
     "todomvc-common": "^1.0.0"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^3.6.4"
   }
 }
