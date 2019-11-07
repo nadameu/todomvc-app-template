@@ -2,6 +2,18 @@
   "private": true,
   "dependencies": {
     "todomvc-app-css": "^2.0.0",
-    "todomvc-common": "^1.0.0"
+    "todomvc-common": "^1.0.0",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^1.18.2",
+    "rollup": "^1.26.3",
+    "rollup-plugin-terser": "^5.1.2",
+    "rollup-plugin-typescript": "^1.0.1",
+    "typescript": "^3.7.2"
+  },
+  "scripts": {
+    "start": "parcel index.html"
   }
 }
