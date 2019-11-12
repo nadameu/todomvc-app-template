@@ -1,19 +1,11 @@
 import { $ } from '../$';
+import { Actions } from '../Action';
 import { delegate } from '../delegate';
-import { ToggleTodo, DestroyTodo, ChangeText } from '../Msg';
+import { dispatch } from '../dispatch';
+import * as KeyCode from '../KeyCode';
+import { Model } from '../Model';
 import { Todo } from '../Todo';
 import { View } from '../View';
-import * as KeyCode from '../KeyCode';
-/*
-<li>
-				<div class="view">
-					<input class="toggle" type="checkbox" />
-					<label></label>
-					<button class="destroy"></button>
-				</div>
-				<input class="edit" />
-			</li>
-*/
 
 const createTodoElement = (() => {
 	const template = $('.template') as HTMLTemplateElement;
@@ -37,15 +29,15 @@ const createTodoElement = (() => {
 const getIndex = (target: HTMLElement): number =>
 	Number(target.closest('li')!.dataset.index || '-1');
 
-export const TodoList: View = dispatch => {
-	const todoList = $('.todo-list') as HTMLUListElement;
+export const TodoList = View((initialState: Model, root: ParentNode) => {
+	const todoList = root.querySelector('.todo-list') as HTMLUListElement;
 
 	delegate(todoList, 'change', '.toggle', (evt, target: HTMLInputElement) => {
-		dispatch(ToggleTodo(getIndex(target), target.checked));
+		dispatch(Actions.ToggleTodo, getIndex(target), target.checked);
 	});
 
 	delegate(todoList, 'click', '.destroy', (evt, target: HTMLButtonElement) => {
-		dispatch(DestroyTodo(getIndex(target)));
+		dispatch(Actions.DestroyTodo, getIndex(target));
 	});
 
 	delegate(todoList, 'dblclick', 'label', (evt, target: HTMLLabelElement) => {
@@ -80,10 +72,12 @@ export const TodoList: View = dispatch => {
 	);
 
 	delegate(todoList, 'change', '.edit', (evt, target: HTMLInputElement) => {
-		dispatch(ChangeText(getIndex(target), target.value));
+		dispatch(Actions.ChangeText, getIndex(target), target.value);
 	});
 
-	return state => {
+	render(initialState);
+	return render;
+	function render(state: Model) {
 		while (todoList.firstChild) todoList.removeChild(todoList.firstChild);
 		state.todos.forEach((todo, index) => {
 			const { fragment, li } = createTodoElement(todo);
@@ -93,5 +87,5 @@ export const TodoList: View = dispatch => {
 				(state.view === 'Completed' && !todo.completed);
 			todoList.appendChild(fragment);
 		});
-	};
-};
+	}
+});

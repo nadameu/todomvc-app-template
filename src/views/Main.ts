@@ -1,6 +1,6 @@
-import { functions as V } from "../View";
-import { MainSection } from "./MainSection";
-import { TodoList } from "./TodoList";
-import { TogleAll } from "./TogleAll";
+import { sequence } from '../View';
+import { MainSection } from './MainSection';
+import { TodoList } from './TodoList';
+import { ToggleAll } from './ToggleAll';
 
-export const Main = V.combine([MainSection, TogleAll, TodoList]);
+export const Main = sequence([MainSection, ToggleAll, TodoList]);

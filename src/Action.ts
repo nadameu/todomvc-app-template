@@ -1,5 +1,9 @@
-export const Actions = {
-	textChanged: (value: string) => ({ type: "text-changed", value } as const)
-};
-
-export type Action = ReturnType<typeof Actions[keyof typeof Actions]>;
+export const enum Actions {
+	AddTodo = 'x-a',
+	ChangeText = 'x-b',
+	ChangeView = 'x-c',
+	ClearCompleted = 'x-d',
+	DestroyTodo = 'x-e',
+	ToggleAll = 'x-f',
+	ToggleTodo = 'x-g'
+}

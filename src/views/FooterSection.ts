@@ -1,11 +1,8 @@
-import { $ } from "../$";
-import { Model } from "../Model";
-import { functions as V, View } from "../View";
+import { Model } from '../Model';
+import { Prop } from '../View';
 
-export const FooterSection: View = dispatch => {
-	const footer = $(".footer") as HTMLElement;
-	return V.contramap(
-		V.bindProperty(footer, "hidden"),
-		(state: Model) => state.todos.length <= 0
-	);
-};
+export const FooterSection = Prop(
+	'.footer',
+	'hidden',
+	({ todos: { length } }: Model) => length <= 0
+);

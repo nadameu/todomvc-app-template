@@ -1,11 +1,8 @@
-import { $ } from "../$";
-import { Model } from "../Model";
-import { functions as V, View } from "../View";
+import { Model } from '../Model';
+import { Prop } from '../View';
 
-export const MainSection: View = dispatch => {
-	const main = $(".main") as HTMLElement;
-	return V.contramap(
-		V.bindProperty(main, "hidden"),
-		(state: Model) => state.todos.length <= 0
-	);
-};
+export const MainSection = Prop(
+	'.main',
+	'hidden',
+	({ todos: { length } }: Model) => length <= 0
+);

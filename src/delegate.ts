@@ -2,15 +2,15 @@ import { listen } from './listen';
 
 export const delegate = <
 	T extends EventTarget,
-	E extends Event,
+	K extends keyof HTMLElementEventMap,
 	U extends HTMLElement
 >(
 	target: T,
-	type: string,
+	type: K,
 	matchers: string,
-	handler: (evt: E, target: U) => void
+	handler: (evt: HTMLElementEventMap[K], target: U) => void
 ) =>
-	listen(target, type, (evt: E): void => {
+	listen(target, type, (evt: HTMLElementEventMap[K]): void => {
 		if (evt.target instanceof HTMLElement && evt.target.matches(matchers)) {
 			handler(evt, evt.target as U);
 		}
