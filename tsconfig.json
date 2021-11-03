@@ -3,6 +3,9 @@
 		"noEmit": true,
 		"target": "esnext",
 		"moduleResolution": "node",
-		"strict": true
+		"strict": true,
+		"jsx": "react",
+		"jsxFactory": "h",
+		"jsxFragmentFactory": "Fragment"
 	}
 }

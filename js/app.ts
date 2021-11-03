@@ -1,37 +1,59 @@
-import { render } from "lit-html";
+import { render } from "preact";
+import * as Cmd from "./Cmd";
 import { App } from "./components/App";
-import { store } from "./store";
-import { STORAGE_ID } from "./constants";
-import { Actions } from "./Action";
-import { fromHash } from "./ViewState";
+import { setImmediate } from "./setImmediate";
+import {
+	Action,
+	ActionResult,
+	Cmd as Command,
+	enqueue,
+	Lazy,
+	State,
+	View,
+	ViewState,
+} from "./types";
 
-const appSection = document.querySelector(".todoapp")!;
-function view() {
-	const state = store.getState();
-	const { view, ...saveMe } = state;
-	saveMe.todos = saveMe.todos.map(({ text, completed }) => ({
-		text,
-		completed,
-		editing: false
-	}));
-	localStorage.setItem(STORAGE_ID, JSON.stringify(saveMe));
-	console.log("State is:", state);
-	render(App(state), appSection);
-	const editing = document.querySelector(
-		".editing .edit"
-	) as HTMLInputElement | null;
-	if (editing) {
-		editing.select();
-		editing.focus();
+function mount(
+	root: Element,
+	view: View,
+	init: Lazy<ActionResult>,
+	subscriptions?: (_: State) => Command[]
+): void {
+	let state: State;
+	handleResult(init());
+	function dispatch(action: Action): void {
+		handleResult(action(state));
 	}
-	if (state.todoCreated) {
-		const input = document.querySelector(".new-todo") as HTMLInputElement;
-		input.focus();
-		store.dispatch(Actions.clearTodoCreated());
+	function handleResult(result: ActionResult): void {
+		const [next, cmd] = result;
+		state = next;
+		update();
+		if (cmd) setImmediate(() => cmd(dispatch));
+		if (subscriptions)
+			subscriptions(state).forEach((sub) => {
+				setImmediate(() => sub(dispatch));
+			});
+	}
+	function update(): void {
+		render(view(state, dispatch), root);
 	}
 }
-store.subscribe(view);
-view();
-window.addEventListener("hashchange", () => {
-	store.dispatch(Actions.changeView(fromHash(window.location.hash)));
-});
+
+const appSection = document.querySelector(".todoapp")!;
+
+mount(
+	appSection,
+	App,
+	() =>
+		enqueue(
+			{
+				allCompleted: undefined,
+				text: "",
+				todoCreated: false,
+				todos: [],
+				view: ViewState.ALL,
+			},
+			Cmd.LOAD
+		),
+	(_) => [Cmd.HASH_CHANGE]
+);
